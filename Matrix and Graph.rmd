@@ -1,0 +1,125 @@
+---
+title: "stats 380 A2"
+author: "Sooyong Choi"
+date: "10/09/2020"
+output: word_document
+---
+
+# Question 1
+```{r}
+triDiag = function(diagonal, upper, lower, nrow , ncol ) {
+  
+  # my_matrix = matrix(0, nrow = length(diagonal), ncol = length(diagonal))
+  if (missing(nrow) & missing(ncol)) {
+    my_matrix = matrix(0, nrow = length(diagonal), ncol = length(diagonal))
+    diag(my_matrix) = diagonal
+    my_matrix[row(my_matrix) - col(my_matrix) == 1] = lower
+    my_matrix[col(my_matrix) - row(my_matrix) == 1] = upper
+    my_matrix
+    }
+  
+  else {
+    my_matrix = matrix(0, nrow = nrow, ncol = ncol)
+    min = min(nrow, ncol)
+    my_matrix[row(my_matrix) == col(my_matrix)] = rep(diagonal, min)[1:min]
+    my_matrix[row(my_matrix) - col(my_matrix) == 1] = lower
+    my_matrix[col(my_matrix) - row(my_matrix) == 1] = upper
+    my_matrix
+    }
+}  
+
+```
+
+# Question 2a
+```{r}
+stratified.hist = function(Sepal.Width, Species, xlab, title) {
+  plot.new()
+  plot.window(xlim = c(2, 4.8), c(0, 30))
+  hist = hist(Sepal.Width, breaks = 20, ylim = c(0, 30), xlab = xlab, main = title)
+  legend("topright", legend = c("setosa", "versicolor", "virginica"), col = hcl(c(240, 180, 0)), lty = 1, lwd = 10)
+
+  table = table(Sepal.Width, Species)
+  virginica_table = table[, "virginica"]
+  versicolor_table = table[, "versicolor"]
+  setosa_table = table[, "setosa"]
+  
+  # remove 0 
+  hist_counts = hist$counts[which(hist$counts != 0)]
+  # difference between count and virginica for ybottom of light green rectangle
+  ybottom_versicolor = virginica_table
+  ybottom_versicolor[which(virginica_table == 0)] = 0 
+  # difference between count and setosa for ytop of light green rectangle
+  ytop_versicolor = ybottom_versicolor +  versicolor_table
+  # light green rectangle
+  
+  rect(xleft = seq(2, 3.3, by = 0.1), ybottom = ybottom_versicolor, xright = seq(2.1, 3.4, by = 0.1), ytop = ytop_versicolor , col = hcl(180), border = NA)
+  
+  # light pink rectangle
+  
+  ytop_virginica = virginica_table[which(virginica_table != 0)]
+  sequence = seq(2, 4.2, by = 0.1)
+  x_axis_virginica = c(sequence[-2.1], 4.4)
+  x_axis_virginica = sequence[which(virginica_table != 0)]
+  rect(xleft = x_axis_virginica, ybottom = 0, xright = x_axis_virginica + 0.1, ytop = ytop_virginica , col = hcl(0), border = NA)
+  
+  # light blue rectangle
+  sequence_setosa = seq(2.8, 4.3, by = 0.1)
+  x_axis_setosa = c(2.2, sequence_setosa)
+  x_axis_setosa = x_axis_setosa[-16]
+  
+  
+  ybottom_setosa = versicolor_table[which(setosa_table != 0)] + virginica_table[which(setosa_table != 0)]
+  ybottom_setosa[8:16] = virginica_table[which(setosa_table != 0 & versicolor_table == 0)]
+  ytop_setosa = hist_counts[which(setosa_table != 0)]
+  rect(xleft = x_axis_setosa, ybottom = ybottom_setosa, xright = x_axis_setosa + 0.1, ytop = ytop_setosa, col = hcl(240), border  = NA)
+  
+  # colourless rectangle with border
+  rect(xleft = hist$breaks[-length(hist$breaks)], ybottom = 0, xright = hist$breaks[-length(hist$breaks)] + 0.1, ytop = hist$counts, col = NA)
+  # add a frame
+  box()
+}
+with (iris, stratified.hist(Sepal.Width, Species, xlab="Sepal.Width", title = "Stratified Histogram"))
+```
+
+# Question 2b
+
+```{r}
+setosa_length = iris$Sepal.Length[1:50]
+versicolor_length = iris$Sepal.Length[51:100]
+virginica_length = iris$Sepal.Length[101:150]
+setosa_width = iris$Sepal.Width[1:50]
+versicolor_width = iris$Sepal.Width[51:100]
+virginica_width = iris$Sepal.Width[101:150]
+
+plot.new()
+plot.window(xlim = c(2,8), ylim = c(0,12))
+par(mar = rep(2,4))
+layout(matrix(1:6, nr = 2, byrow = TRUE))
+
+# top histogram
+hist(setosa_length, xlim = c(min(setosa_length), 8), ylim = c(0, 12), col = hcl(240), main ="", axes = TRUE)
+axis(side = 1, seq(4.5, 8, by = 0.5))
+axis(side = 2, seq(0, 12, by = 1))
+rect(xleft = 4.4, ybottom =0, xright = 8, ytop =0 )
+
+hist(versicolor_length, xlim = c(4.5, 8), ylim = c(0, 10), col = hcl(180), breaks = 11, main ="Histogram for iris$Sepal.Length", axes = T)
+rect(xleft = 4.4, ybottom =0, xright = 8, ytop =0 )
+
+hist(virginica_length, xlim = c(4.5, 8), ylim = c(0, 11), col = hcl(0), breaks = 14, main = "")
+axis(side = 1, seq(4.5, 8, by = 0.5))
+axis(side = 2, seq(0, 10, by = 1))
+rect(xleft = 4.4, ybottom =0, xright = 8, ytop =0 )
+
+# bottom histograms
+hist(setosa_width, xlim = c(2, 4.4), ylim = c(0, 9), col = hcl(240), breaks = 20, main ="")
+rect(xleft = 2, ybottom =0, xright = 4.4, ytop =0 )
+
+hist(versicolor_width, xlim = c(2, 4), ylim = c(0, 8), col = hcl(180), breaks = 15, main ="Histogram for iris$Sepal.Width")
+rect(xleft = 2, ybottom =0, xright = 4.5, ytop =0 )
+
+hist(virginica_width, xlim = c(2, 4), ylim = c(0, 12), col = hcl(0), breaks = 20, main="")
+rect(xleft = 2, ybottom =0, xright = 4.5, ytop =0 )
+
+
+
+```

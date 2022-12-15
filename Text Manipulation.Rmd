@@ -1,0 +1,73 @@
+---
+title: "stats-380-assignment-3"
+author: "Sooyong Choi"
+date: "01 October 2020"
+output: word_document
+---
+
+```{r}
+# Question 1a
+
+setwd("C:/Users/rick9/Desktop/Stats 380/A3")
+text = readLines("sales.txt")
+
+```
+
+```{r}
+# Question 1b
+
+# finding the index for countries in the data
+match = unlist(gregexpr('[a-zA-Z]+[[:space:]]?[a-zA-Z]+[[:space:]]?[a-zA-Z]+->\\{', text))
+
+# finding the ending index for the end of city data
+endmatch = c(unlist(gregexpr('\\},', text)), nchar(text))
+
+splitData = substring(text, match, endmatch)
+
+```
+
+```{r}
+# Question 1c
+
+# finding the index for data and sales
+dateindex = gregexpr("[a-zA-Z]+ [0-9]+ [a-zA-Z]+ [0-9]+,Sales->[0-9]+", text)
+
+# extracting the data using the index 
+datedata = regmatches(text, dateindex)
+
+# remove 'Sales->' from the text file
+data = lapply(data,function(datedata)(gsub("Sales->","",datedata)))
+
+# separate the string by ,
+unlistedextractedData = unlist(strsplit(data[[1]], ","))
+extractedData = list(unlistedextractedData)
+
+head(extractedData[[1]])
+tail(extractedData[[1]])
+
+```
+
+```{r}
+# Question 1d
+
+salesMatrix = matrix(unlistedextractedData, ncol = 2, byrow = TRUE)
+
+# finding the comma index to count how many datas belong to each country
+commaIndex = unlist(gregexpr(",", text))
+
+# checking how many data belongs to each country
+# all the cities have exactly the same data length, 200
+cityDataLen = length(commaIndex[commaIndex < match[2]])
+length(commaIndex[(match[2] < commaIndex) & (commaIndex < match[3])])
+length(commaIndex[(match[3] < commaIndex) & (commaIndex < match[4])])
+length(commaIndex[(match[4] < commaIndex) & (commaIndex < match[5])])
+length(commaIndex[(match[5] < commaIndex) & (commaIndex < match[6])])
+
+cityNames = c("Boston", "New York City", "Paris", "London", "Shanghai", "Tokyo")
+
+# cityDataLen is divided by 2 as the date and the sales are the in the same row
+salesData = list(cbind(rep(cityNames, each = cityDataLen/2), salesMatrix))
+
+head(salesData[[1]])
+```
+

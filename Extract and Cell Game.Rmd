@@ -1,0 +1,73 @@
+---
+title: "Stats 380 a4 scho397"
+author: "Sooyong Choi"
+date: "19 October 2020"
+output: word_document
+---
+# Question 1
+```{r}
+#file address is "C:/Users/rick9/Desktop/Stats 380/A4/summer.html"
+processHTML = function(fileaddress) {
+  data = readLines(fileaddress)
+  first_extract = gregexpr("\\([a-zA-Z]+\\)</span>.?</th><td>[0-9]+</td><td>[0-9]+</td><td>[0-9]+</td><td>[0-9]+", data)
+length(unlist(first_extract)[which(unlist(first_extract) != -1)])
+index = which(unlist(first_extract) != -1)
+indexedData = data[index]
+pattern = gregexpr("\\([a-zA-Z]+\\)</span>.?</th><td>[0-9]+</td><td>[0-9]+</td><td>[0-9]+</td><td>[0-9]+", indexedData)
+extractedData = regmatches(indexedData, pattern)
+# country label
+country = gsub("[0-9]|<.+>", "", unlist(extractedData))
+# medals
+number = gregexpr("[0-9]+", unlist(extractedData))
+medal_list = regmatches(unlist(extractedData), number)
+medal = unlist(medal_list)
+allData = data.frame(V1 = country, V2 = medal[seq(1, length(medal), 4)], V3 = medal[seq(2, length(medal), 4)], V4 = medal[seq(3, length(medal), 4)], V5 = medal[seq(4, length(medal), 4)])
+return(allData)
+
+
+}
+head(allData)
+```
+
+```{r}
+cell = function(n){
+  counter = 0
+  matrix = matrix(0, nrow = 3, ncol = 3)
+  # checking whether the numbers in the matrix is 0 to 8 distinctively
+  while (!all(sort(as.numeric(matrix)) == 0:8)) {
+    matrix = matrix(0, nrow = 3, ncol = 3)
+    row = sample(1:3, n, replace = TRUE)
+    col = sample(1:3, n, replace = TRUE)
+
+    for (i in 1:n){
+    matrix[row[i], col[i]] = matrix[row[i], col[i]] + 1
+
+    if (row[i] == 1){
+      matrix[row[i]+1, col[i]] = matrix[row[i]+1, col[i]] + 1
+    }  
+    if (row[i] == 2){
+      matrix[row[i]-1, col[i]] = matrix[row[i]-1, col[i]] + 1
+      matrix[row[i]+1, col[i]] = matrix[row[i]+1, col[i]] + 1
+    }  
+    if (row[i] == 3){
+      matrix[row[i]-1, col[i]] = matrix[row[i]-1, col[i]] + 1
+    }
+    if (col[i] == 1){
+      matrix[row[i], col[i]+1] = matrix[row[i], col[i]+1] + 1
+    }
+    if (col[i] == 2){
+      matrix[row[i], col[i]+1] = matrix[row[i], col[i]+1] + 1
+      matrix[row[i], col[i]-1] = matrix[row[i], col[i]-1] + 1
+    }
+    if (col[i] == 3){
+     matrix[row[i], col[i]-1] = matrix[row[i], col[i]-1] + 1
+    }
+    
+    }
+      counter = counter + 1
+  }
+print(counter)
+matrix
+}
+```
+

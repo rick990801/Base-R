@@ -1,0 +1,140 @@
+---
+title: "Stats 380"
+author: "Sooyong Choi"
+date: "07/08/2020"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+
+
+## Question 1a
+```{r}
+seq(5.5, 32.5, by = 3)
+```
+
+## Question 1b
+```{r}
+cumsum(2:8)
+```
+
+## Question 1c
+```{r}
+rev(cumprod(1:5) + 0.3)
+```
+
+## Question 1d
+```{r}
+rep(0:4,each=3)[2:13]
+```
+
+## Question 1e
+```{r}
+seq(2.3, 3.8, by = 0.3)
+```
+
+## Question 1f
+```{r}
+rep(seq(0.1, 0.6, by = 0.1), rep(3:1,2))
+```
+
+## Question 1g
+```{r}
+a = rep(0,14)
+a[cumsum(2:5)] = 1:4
+```
+
+## Question 1h
+```{r}
+paste("x^", rep(3:1, 1:3), sep = "")
+```
+
+
+## Question 2a
+```{r}
+sum1 = function(x) sum(exp(x)/((seq(along = x))^x))
+
+```
+
+## Question 2b
+```{r}
+sum2 = function(x) sum(exp(seq(along = x))/factorial(seq(along = x)))
+```
+
+
+## Question 3a
+```{r}
+bmi_function = function(weight, height) 
+  round((weight/height^2), 3)
+  
+
+```
+
+## Question 3b
+```{r}
+weight.category = function(bmi) {
+  if (bmi < 18.5) {
+    cat("This corresponds to category: underweight")
+  }
+    
+  else if (18.5 <= bmi & bmi < 25) {
+    cat("This corresponds to category: normal weight")
+  }
+    
+  else if (25 <= bmi & bmi < 33) {
+    cat("This corresponds to category: overweight")
+  }
+    
+  else
+    cat("This corresponds to category: obesity")
+}
+
+```
+
+## Question 4a
+```{r}
+rwalk = function(steps) {
+  if (steps > 0) {
+    # to account for origin 0
+    total_distance = numeric(steps+1)
+    # generates random number between 1 and -1 with biased probability
+    random = sample(c(-1,1), steps, prob = c(0.45, 0.55), replace = TRUE)
+    cat("random numbers are ", random, "\n")
+    x_n = cumsum(random)  
+    # to include origin 0 at the start
+    total_distance[-1] = x_n
+    return(total_distance)
+  }
+  
+  else if (steps == 0) {
+  return(0)
+ } 
+}
+```
+2:length(total_distance)
+## Question 4b
+```{r}
+rwalk2 = function(steps) {
+  if (steps > 0) {
+    # to account for origin 0
+    total_distance = numeric(steps+1)
+    # generates random number between 1 and -1 with biased probability
+    random = sample(c(-1,1), steps, prob = c(0.45, 0.55), replace = TRUE)
+    cat("random numbers are ", random, "\n")
+    x_n = cumsum(random)
+    # to include origin 0 at the start
+    total_distance[-1] = x_n
+    cat("distances are ", total_distance, "\n")
+    rhs = sum(ifelse(x_n > 0 | total_distance[-steps] > 0, 1, 0))
+    return(rhs)
+    }
+  
+  else if (steps == 0) {
+    return(0)
+  }
+}
+```
+
+
+
